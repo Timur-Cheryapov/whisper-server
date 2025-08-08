@@ -34,7 +34,7 @@ MODEL_BATCH_SIZE=128
 
 1. Build and push Docker image:
    ```bash
-   docker build -t your-username/whisper-server .
+   docker build --platform linux/amd64 -t your-username/whisper-server:v1.0.0 .
    docker push your-username/whisper-server
    ```
 
