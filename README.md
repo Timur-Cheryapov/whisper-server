@@ -1,6 +1,6 @@
 # Whisper Server
 
-High-performance audio transcription server optimized for RunPod.io with smart model management and configurable batch processing.
+High-performance audio transcription server optimized for RunPod.io with smart model management and configurable batch processing. [Docker Hub](https://hub.docker.com/r/rushiy26/whisper-server)
 
 ## Features
 
