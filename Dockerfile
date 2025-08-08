@@ -1,4 +1,4 @@
-FROM nvidia/cuda:12.9.1-cudnn-devel-ubuntu24.04
+FROM nvidia/cuda:12.9.1-cudnn-runtime-ubuntu24.04
 
 # Remove any third-party apt sources to avoid issues with expiring keys.
 RUN rm -f /etc/apt/sources.list.d/*.list
@@ -17,8 +17,8 @@ RUN apt-get update -y && \
         python3-pip \
         python3-dev \
         ffmpeg \
-        libgl1-mesa-glx \
-        libglib2.0-0 && \
+        libgl1 \
+        libx11-6 && \
     ln -s /usr/bin/python3 /usr/bin/python && \
     apt-get autoremove -y && \
     apt-get clean -y && \
@@ -32,9 +32,7 @@ RUN --mount=type=cache,target=/root/.cache/pip \
     pip install --no-cache-dir --break-system-packages \
         -r /requirements.txt && \
     pip install --no-cache-dir --break-system-packages \
-        huggingface_hub[hf_xet] && \
-    # Clean up pip cache and temporary files
-    rm -rf /root/.cache/pip /tmp/* /var/tmp/*
+        huggingface_hub[hf_xet]
 
 # Copy the rest of the application code
 COPY src .

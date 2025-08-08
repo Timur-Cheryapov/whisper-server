@@ -8,7 +8,7 @@ import torch
 import pickle
 from transformers import AutoModelForSpeechSeq2Seq, AutoProcessor, pipeline
 
-def load_whisper_pipeline(save_dir="./whisper_model_cache", batch_size=32):
+def load_whisper_pipeline(save_dir="./whisper_model_cache", batch_size=128):
     """
     Load the Whisper pipeline from locally saved components.
     
@@ -52,7 +52,7 @@ def load_whisper_pipeline(save_dir="./whisper_model_cache", batch_size=32):
         model_path,
         torch_dtype=torch_dtype,
         low_cpu_mem_usage=True,
-        local_files_only=True  # Ensure no internet access
+        local_files_only=True,  # Ensure no internet access
     )
     model.to(device)
     print("✅ Model loaded successfully")
@@ -65,7 +65,7 @@ def load_whisper_pipeline(save_dir="./whisper_model_cache", batch_size=32):
     print("📥 Loading processor from local files...")
     processor = AutoProcessor.from_pretrained(
         processor_path,
-        local_files_only=True  # Ensure no internet access
+        local_files_only=True,  # Ensure no internet access
     )
     print("✅ Processor loaded successfully")
     
