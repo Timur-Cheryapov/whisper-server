@@ -6,33 +6,35 @@ RUN rm -f /etc/apt/sources.list.d/*.list
 # Set shell and noninteractive environment variables
 SHELL ["/bin/bash", "-c"]
 ENV DEBIAN_FRONTEND=noninteractive
-ENV SHELL=/bin/bash
 
 # Set working directory
 WORKDIR /
 
-# Update and upgrade the system packages
+# Install only essential packages in single layer
 RUN apt-get update -y && \
-    apt-get upgrade -y && \
-    apt-get install --yes --no-install-recommends sudo ca-certificates git wget curl bash libgl1 libx11-6 software-properties-common ffmpeg build-essential -y &&\
-    apt-get autoremove -y && \
-    apt-get clean -y && \
-    rm -rf /var/lib/apt/lists/*
-
-# Install Python (using default Python 3.12 from Ubuntu 24.04)
-RUN apt-get update -y && \
-    apt-get install python3 python3-dev python3-venv python3-pip -y --no-install-recommends && \
+    apt-get install -y --no-install-recommends \
+        python3 \
+        python3-pip \
+        python3-dev \
+        ffmpeg \
+        libgl1-mesa-glx \
+        libglib2.0-0 && \
     ln -s /usr/bin/python3 /usr/bin/python && \
     apt-get autoremove -y && \
     apt-get clean -y && \
-    rm -rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-# Install Python dependencies
+# Install Python dependencies in optimized order
 COPY builder/requirements.txt /requirements.txt
 RUN --mount=type=cache,target=/root/.cache/pip \
-    pip install huggingface_hub[hf_xet] --break-system-packages && \
-    pip install torch --index-url https://download.pytorch.org/whl/cu129 --break-system-packages && \
-    pip install -r /requirements.txt --no-cache-dir --break-system-packages
+    pip install --no-cache-dir --break-system-packages \
+        torch --index-url https://download.pytorch.org/whl/cu129 && \
+    pip install --no-cache-dir --break-system-packages \
+        -r /requirements.txt && \
+    pip install --no-cache-dir --break-system-packages \
+        huggingface_hub[hf_xet] && \
+    # Clean up pip cache and temporary files
+    rm -rf /root/.cache/pip /tmp/* /var/tmp/*
 
 # Copy the rest of the application code
 COPY src .

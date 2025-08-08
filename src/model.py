@@ -8,12 +8,13 @@ import torch
 import pickle
 from transformers import AutoModelForSpeechSeq2Seq, AutoProcessor, pipeline
 
-def load_whisper_pipeline(save_dir="./whisper_model_cache"):
+def load_whisper_pipeline(save_dir="./whisper_model_cache", batch_size=32):
     """
     Load the Whisper pipeline from locally saved components.
     
     Args:
         save_dir (str): Directory containing the saved model components
+        batch_size (int): Batch size for the pipeline (default: 32)
         
     Returns:
         pipeline: The loaded speech recognition pipeline
@@ -69,14 +70,14 @@ def load_whisper_pipeline(save_dir="./whisper_model_cache"):
     print("✅ Processor loaded successfully")
     
     # Create pipeline
-    print("🔧 Creating pipeline...")
+    print(f"🔧 Creating pipeline with batch size: {batch_size}")
     pipe = pipeline(
         config["task"],
         model=model,
         tokenizer=processor.tokenizer,
         feature_extractor=processor.feature_extractor,
         chunk_length_s=config.get("chunk_length_s", 30),
-        batch_size=config.get("batch_size", 32),
+        batch_size=batch_size,  # Use configurable batch size
         torch_dtype=torch_dtype,
         device=device,
     )
