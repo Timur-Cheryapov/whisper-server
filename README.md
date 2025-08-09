@@ -75,10 +75,10 @@ It can be created using `save_pipeline.py` file. Then if you will try to run the
 
 | GPU Type | VRAM | Recommended Batch Size |
 |----------|------|----------------------|
-| RTX 4000 | 16GB | 64 |
-| RTX 4090 | 24GB | 128 |
-| A100 | 40GB | 256 |
-| H100 | 80GB | 512 |
+| RTX 4000 | 16GB | 128 |
+| RTX 4090 | 24GB | 256 |
+| A100 | 40GB | 512 |
+| H100 | 80GB | 1024 |
 
 Set via environment variable: `MODEL_BATCH_SIZE=128`
 
