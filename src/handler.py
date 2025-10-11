@@ -25,10 +25,14 @@ async def handler(job):
     
     # Download file
     audio_file_path = download_files_from_urls(job_id=job['id'], urls=audio_url)[0]
+
+    # Move the metadata to the beggining of the file
+    audio_file_path_fixed = audio_file_path + "_fixed.mp3"
+    os.system(f"ffmpeg -i {audio_file_path} -movflags faststart {audio_file_path_fixed}")
     
     # Process with single optimized model
     model = get_model()
-    result = model(audio_file_path)
+    result = model(audio_file_path_fixed)
     
     return result
 
