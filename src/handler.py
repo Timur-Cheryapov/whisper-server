@@ -1,6 +1,7 @@
 import runpod
 from runpod.serverless.utils import download_files_from_urls
 import os
+import subprocess
 
 from model import load_whisper_pipeline
 
@@ -9,6 +10,17 @@ MODEL_BATCH_SIZE = int(os.environ.get('MODEL_BATCH_SIZE', '128'))
 
 # Single model instance with lazy loading
 model = None
+
+unsupported_audio_file_extensions = ["m4a"]
+
+def fix_metadata_fast(src, dst):
+    print(f"🔄 Fixing metadata: {src} -> {dst}")
+    subprocess.run([
+        "ffmpeg", "-y", "-i",
+        src,"-ar", "16000", "-ac",
+        "1", "-c:a", "pcm_s16le", dst
+    ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    print(f"✅ Metadata fixed: {src} -> {dst}")
 
 def get_model():
     """Lazy load single model instance with optimal batch size"""
@@ -25,10 +37,13 @@ async def handler(job):
     
     # Download file
     audio_file_path = download_files_from_urls(job_id=job['id'], urls=audio_url)[0]
+    audio_file_extension = audio_file_path.split('.')[-1]
+    audio_file_path_fixed = audio_file_path
 
-    # Move the metadata to the beggining of the file
-    audio_file_path_fixed = audio_file_path + "_fixed.mp3"
-    os.system(f"ffmpeg -i {audio_file_path} -movflags faststart {audio_file_path_fixed}")
+    # Move the metadata to the beggining of the file for unsupported audio file extensions
+    if audio_file_extension in unsupported_audio_file_extensions:
+        audio_file_path_fixed = audio_file_path.replace(audio_file_extension, "wav")
+        fix_metadata_fast(audio_file_path, audio_file_path_fixed)
     
     # Process with single optimized model
     model = get_model()
