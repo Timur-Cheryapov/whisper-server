@@ -1,4 +1,4 @@
-FROM nvidia/cuda:12.9.1-cudnn-runtime-ubuntu24.04
+FROM nvidia/cuda:12.8.1-cudnn-runtime-ubuntu24.04
 
 # Remove any third-party apt sources to avoid issues with expiring keys.
 RUN rm -f /etc/apt/sources.list.d/*.list
@@ -6,6 +6,7 @@ RUN rm -f /etc/apt/sources.list.d/*.list
 # Set shell and noninteractive environment variables
 SHELL ["/bin/bash", "-c"]
 ENV DEBIAN_FRONTEND=noninteractive
+ENV PYTHONUNBUFFERED=1
 
 # Set working directory
 WORKDIR /
@@ -28,7 +29,7 @@ RUN apt-get update -y && \
 COPY builder/requirements.txt /requirements.txt
 RUN --mount=type=cache,target=/root/.cache/pip \
     pip install --no-cache-dir --break-system-packages \
-        torch --index-url https://download.pytorch.org/whl/cu129 && \
+        torch --index-url https://download.pytorch.org/whl/cu128 && \
     pip install --no-cache-dir --break-system-packages \
         -r /requirements.txt && \
     pip install --no-cache-dir --break-system-packages \

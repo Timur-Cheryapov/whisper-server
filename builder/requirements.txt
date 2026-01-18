@@ -1,2 +1,9 @@
-transformers==4.51.3
-runpod~=1.7.13
+# Core dependencies
+transformers>=4.57.0
+runpod>=1.8.1
+
+# Performance optimization
+accelerate>=1.2.0
+
+# Audio processing (optional, for programmatic conversion)
+pydub>=0.25.1

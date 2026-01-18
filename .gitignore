@@ -1,1 +1,13 @@
+# Model cache (too large for git)
 /src/whisper_model_cache
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+
+# Test outputs
+*.converted.wav
+custom_test.json
